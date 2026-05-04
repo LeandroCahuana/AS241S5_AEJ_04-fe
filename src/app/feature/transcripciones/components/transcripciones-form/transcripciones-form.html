@@ -1,0 +1,94 @@
+<div class="st-form">
+  <div class="st-form__header">
+    <a routerLink="/transcripciones" class="back-link">
+      <svg class="back-link__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Volver a transcripciones
+    </a>
+    <h2 class="st-form__title">Nueva transcripción</h2>
+    <p class="st-form__subtitle">Ingresa la URL del video y el idioma para transcribir el audio</p>
+  </div>
+
+  <div class="card">
+    <form (ngSubmit)="transcribir()" #form="ngForm">
+      <div class="form-group">
+        <label for="url" class="form-label">URL del video</label>
+        <input
+          id="url" name="url" type="url"
+          [(ngModel)]="url" required
+          placeholder="https://www.youtube.com/watch?v=..."
+          class="form-input"
+        />
+        <p class="form-hint">Soporta YouTube, Vimeo y otras plataformas</p>
+      </div>
+      <div class="form-group form-group--mb">
+        <label for="lang" class="form-label">Idioma del audio</label>
+        <select id="lang" name="lang" [(ngModel)]="lang" required class="form-select">
+          <option value="" disabled>Selecciona un idioma</option>
+          @for (l of languages; track l.code) {
+            <option [value]="l.code">{{ l.label }} ({{ l.code }})</option>
+          }
+        </select>
+      </div>
+      <button type="submit" [disabled]="loading() || !url.trim() || !lang" class="btn btn--indigo btn--full">
+        @if (loading()) {
+          <div class="spinner spinner--sm"></div>
+          Transcribiendo... (puede tardar unos segundos)
+        } @else {
+          <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+          </svg>
+          Transcribir audio
+        }
+      </button>
+    </form>
+    @if (error()) {
+      <div class="error-alert">{{ error() }}</div>
+    }
+  </div>
+
+  @if (result()) {
+    <div class="card card--mt result">
+      <div class="result__success-header">
+        <div class="result__success-icon">
+          <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 class="result__title">Transcripción completada</h3>
+      </div>
+      <div class="result__fields">
+        <div class="detail-field">
+          <p class="detail-field__label">Idioma detectado</p>
+          <span class="badge badge--indigo">{{ result()!.lang }}</span>
+        </div>
+        <div class="detail-field">
+          <p class="detail-field__label">Transcripción</p>
+          <div class="result__text">{{ result()!.text }}</div>
+        </div>
+        @if (result()!.chunks.length) {
+          <div class="detail-field">
+            <p class="detail-field__label">Segmentos ({{ result()!.chunks.length }})</p>
+            <div class="chunks">
+              @for (chunk of result()!.chunks; track $index) {
+                <div class="chunk">
+                  <div class="chunk__meta">
+                    <span>{{ chunk.offset.toFixed(2) }}s</span>
+                    <span>+{{ chunk.duration.toFixed(2) }}s</span>
+                  </div>
+                  <p class="chunk__text">{{ chunk.text }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      <div class="result__actions">
+        <button (click)="limpiar()" class="btn btn--outline">Nueva transcripción</button>
+        <a routerLink="/transcripciones" class="btn btn--dark">Ver todas</a>
+      </div>
+    </div>
+  }
+</div>

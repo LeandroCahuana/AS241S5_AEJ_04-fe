@@ -1,0 +1,68 @@
+<div class="settings">
+  <div class="settings__header">
+    <h2 class="settings__title">Configuración</h2>
+    <p class="settings__subtitle">Ajusta la conexión con el backend</p>
+  </div>
+
+  <div class="card">
+    <div class="card__section-title">URL del backend</div>
+    <p class="card__section-desc">
+      Todos los servicios (WhatsApp y Transcripciones) apuntan a esta URL base.
+      El cambio se guarda en el navegador y persiste entre sesiones.
+    </p>
+
+    <div class="form-group">
+      <label for="apiUrl" class="form-label">URL base</label>
+      <div class="input-row">
+        <input
+          id="apiUrl"
+          name="apiUrl"
+          type="url"
+          [(ngModel)]="urlInput"
+          placeholder="http://localhost:8081"
+          class="form-input"
+          (keydown.enter)="guardar()"
+        />
+        <button (click)="guardar()" class="btn btn--indigo">
+          <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 13l4 4L19 7" />
+          </svg>
+          Guardar
+        </button>
+      </div>
+      <p class="form-hint">Ejemplo: <code>http://localhost:8081</code> o <code>https://mi-api.com</code></p>
+    </div>
+
+    @if (error()) {
+      <div class="error-alert">{{ error() }}</div>
+    }
+
+    @if (saved()) {
+      <div class="success-alert">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+        </svg>
+        URL guardada correctamente
+      </div>
+    }
+  </div>
+
+  <div class="card card--mt">
+    <div class="card__section-title">Estado actual</div>
+    <div class="status-row">
+      <span class="status-row__label">Conectando a</span>
+      <code class="status-row__url">{{ currentUrl }}</code>
+    </div>
+    <div class="status-row status-row--actions">
+      <span class="status-row__label">¿Quieres volver al valor por defecto?</span>
+      <button (click)="restaurar()" class="btn btn--outline btn--sm">
+        <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Restaurar por defecto
+      </button>
+    </div>
+  </div>
+</div>

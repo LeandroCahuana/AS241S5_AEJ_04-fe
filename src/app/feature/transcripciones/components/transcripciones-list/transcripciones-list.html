@@ -1,0 +1,172 @@
+<div class="st-list">
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">Transcripciones</h2>
+      <p class="page-header__subtitle">Gestiona las transcripciones de audio y video</p>
+    </div>
+    <a routerLink="/transcripciones/new" class="btn btn--indigo">
+      <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+      </svg>
+      Nueva transcripción
+    </a>
+  </div>
+
+  <div class="table-card">
+    <div class="table-toolbar">
+      <span class="table-toolbar__title">Registros</span>
+      <div class="table-toolbar__filters">
+        <button
+          (click)="setFilter(undefined)"
+          class="table-toolbar__filter-btn"
+          [class.table-toolbar__filter-btn--active]="filter() === undefined"
+        >Todos</button>
+        <button
+          (click)="setFilter(true)"
+          class="table-toolbar__filter-btn"
+          [class.table-toolbar__filter-btn--active]="filter() === true"
+        >Activos</button>
+        <button
+          (click)="setFilter(false)"
+          class="table-toolbar__filter-btn"
+          [class.table-toolbar__filter-btn--active]="filter() === false"
+        >Eliminados</button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="data-table__spinner"><div class="spinner"></div></div>
+    } @else {
+      <div class="table-scroll-wrapper">
+      <table class="data-table">
+        <thead class="data-table__head">
+          <tr>
+            <th>URL</th>
+            <th>Idioma</th>
+            <th>Transcripción</th>
+            <th>Segmentos</th>
+            <th>Estado</th>
+            <th>Creado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of records(); track item.id) {
+            <tr class="data-table__row">
+              <td class="data-table__cell data-table__cell--url">
+                <p style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:#1e1b4b" [title]="item.url">
+                  {{ item.url }}
+                </p>
+              </td>
+              <td class="data-table__cell">
+                <span class="badge badge--indigo">{{ item.lang }}</span>
+              </td>
+              <td class="data-table__cell data-table__cell--text">
+                <p style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.75rem" [title]="item.text">
+                  {{ item.text || '—' }}
+                </p>
+              </td>
+              <td class="data-table__cell data-table__cell--muted">
+                {{ item.chunks.length }} seg.
+              </td>
+              <td class="data-table__cell">
+                <span class="badge" [class]="item.active ? 'badge--blue' : 'badge--slate'">
+                  {{ item.active ? 'Activo' : 'Eliminado' }}
+                </span>
+              </td>
+              <td class="data-table__cell data-table__cell--muted">{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td class="data-table__cell">
+                <div class="action-group">
+                  <button (click)="verDetalle(item)" title="Ver detalle" class="action-btn action-btn--indigo">
+                    <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </button>
+                  @if (item.active) {
+                    <button (click)="eliminar(item.id)" title="Eliminar" class="action-btn action-btn--red">
+                      <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  } @else {
+                    <button (click)="restaurar(item.id)" title="Restaurar" class="action-btn action-btn--green">
+                      <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                      </svg>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="data-table__empty">
+                <svg style="width:2.5rem;height:2.5rem;margin:0 auto 0.75rem;display:block;opacity:0.3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                </svg>
+                No hay transcripciones para mostrar
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      </div>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="error-alert">{{ error() }}</div>
+  }
+</div>
+
+@if (selected()) {
+  <div class="modal-overlay" (click)="selected.set(null)">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h3 class="modal__title">Detalle de transcripción</h3>
+        <button (click)="selected.set(null)" class="modal__close">
+          <svg style="width:1rem;height:1rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="detail-field">
+          <p class="detail-field__label">URL del video</p>
+          <p class="detail-field__value detail-field__value--break">{{ selected()!.url }}</p>
+        </div>
+        <div class="detail-field">
+          <p class="detail-field__label">Idioma</p>
+          <span class="badge badge--indigo">{{ selected()!.lang }}</span>
+        </div>
+        <div class="detail-field">
+          <p class="detail-field__label">Transcripción completa</p>
+          <p class="detail-field__text">{{ selected()!.text }}</p>
+        </div>
+        @if (selected()!.chunks.length) {
+          <div class="detail-field">
+            <p class="detail-field__label">Segmentos ({{ selected()!.chunks.length }})</p>
+            <div class="chunks">
+              @for (chunk of selected()!.chunks; track $index) {
+                <div class="chunk">
+                  <div class="chunk__meta">
+                    <span>⏱ {{ chunk.offset.toFixed(2) }}s</span>
+                    <span>⏳ {{ chunk.duration.toFixed(2) }}s</span>
+                    <span>🌐 {{ chunk.lang }}</span>
+                  </div>
+                  <p class="chunk__text">{{ chunk.text }}</p>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

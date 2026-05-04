@@ -1,0 +1,102 @@
+<div class="dashboard">
+  <div class="dashboard__header">
+    <h2 class="dashboard__title">Dashboard</h2>
+    <p class="dashboard__subtitle">Estadísticas del último mes</p>
+  </div>
+
+  <div class="dashboard__grid">
+    <div class="stat-card">
+      <p class="stat-card__label">Verificaciones WhatsApp</p>
+      <p class="stat-card__value">{{ waTotal() }}</p>
+      <p class="stat-card__hint">último mes</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-card__label">Números válidos</p>
+      <p class="stat-card__value stat-card__value--green">{{ waValid() }}</p>
+      <p class="stat-card__hint">de {{ waTotal() }} verificaciones</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-card__label">Transcripciones</p>
+      <p class="stat-card__value">{{ stTotal() }}</p>
+      <p class="stat-card__hint">último mes</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-card__label">Idiomas distintos</p>
+      <p class="stat-card__value stat-card__value--indigo">{{ stLangs() }}</p>
+      <p class="stat-card__hint">en transcripciones</p>
+    </div>
+  </div>
+
+  <div class="dashboard__grid">
+    <div class="stat-card">
+      <p class="stat-card__label">WA activos</p>
+      <p class="stat-card__value">{{ waActive() }}</p>
+      <p class="stat-card__hint">registros activos</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-card__label">WA eliminados</p>
+      <p class="stat-card__value stat-card__value--red">{{ waInactive() }}</p>
+      <p class="stat-card__hint">soft delete</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-card__label">Transcripciones activas</p>
+      <p class="stat-card__value">{{ stActive() }}</p>
+      <p class="stat-card__hint">registros activos</p>
+    </div>
+    <div class="stat-card">
+      <p class="stat-card__label">Transcripciones eliminadas</p>
+      <p class="stat-card__value stat-card__value--red">{{ stInactive() }}</p>
+      <p class="stat-card__hint">soft delete</p>
+    </div>
+  </div>
+
+  <div class="dashboard__tables">
+    <div class="recent-table">
+      <div class="recent-table__header">
+        <h3 class="recent-table__title">Últimas verificaciones</h3>
+        <a routerLink="/whatsapp" class="recent-table__link">Ver todos</a>
+      </div>
+      <div class="recent-table__body">
+        @for (item of waRecent(); track item.id) {
+          <div class="recent-table__row">
+            <div>
+              <p class="recent-table__primary">{{ item.phoneNumber }}</p>
+              <p class="recent-table__secondary">{{ item.country }}</p>
+            </div>
+            <div class="recent-table__meta">
+              <span class="badge" [class]="item.valid ? 'badge--green' : 'badge--red'">
+                {{ item.valid ? 'Válido' : 'Inválido' }}
+              </span>
+              <span class="recent-table__date">{{ item.createdAt | date:'dd/MM/yy' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="recent-table__empty">Sin registros recientes</p>
+        }
+      </div>
+    </div>
+
+    <div class="recent-table">
+      <div class="recent-table__header">
+        <h3 class="recent-table__title">Últimas transcripciones</h3>
+        <a routerLink="/transcripciones" class="recent-table__link">Ver todas</a>
+      </div>
+      <div class="recent-table__body">
+        @for (item of stRecent(); track item.id) {
+          <div class="recent-table__row">
+            <div class="recent-table__text-block">
+              <p class="recent-table__primary recent-table__primary--truncate">{{ item.url }}</p>
+              <p class="recent-table__secondary recent-table__secondary--truncate">{{ item.text }}</p>
+            </div>
+            <div class="recent-table__meta">
+              <span class="badge badge--indigo">{{ item.lang }}</span>
+              <span class="recent-table__date">{{ item.createdAt | date:'dd/MM/yy' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="recent-table__empty">Sin registros recientes</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>
