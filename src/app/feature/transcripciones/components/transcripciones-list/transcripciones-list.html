@@ -86,6 +86,12 @@
                     </svg>
                   </button>
                   @if (item.active) {
+                    <button (click)="abrirEdicion(item)" title="Editar" class="action-btn action-btn--slate">
+                      <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
                     <button (click)="eliminar(item.id)" title="Eliminar" class="action-btn action-btn--red">
                       <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -124,6 +130,61 @@
     <div class="error-alert">{{ error() }}</div>
   }
 </div>
+
+@if (editing()) {
+  <div class="modal-overlay" (click)="cerrarEdicion()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal__header">
+        <h3 class="modal__title">Editar transcripción</h3>
+        <button (click)="cerrarEdicion()" class="modal__close">
+          <svg style="width:1rem;height:1rem" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label for="editUrl" class="form-label">URL del video</label>
+          <input
+            id="editUrl"
+            name="editUrl"
+            type="url"
+            [(ngModel)]="editUrl"
+            placeholder="https://www.youtube.com/watch?v=..."
+            class="form-input"
+          />
+        </div>
+        <div class="form-group">
+          <label for="editLang" class="form-label">Idioma del audio</label>
+          <select id="editLang" name="editLang" [(ngModel)]="editLang" class="form-select">
+            <option value="" disabled>Selecciona un idioma</option>
+            @for (l of languages; track l.code) {
+              <option [value]="l.code">{{ l.label }} ({{ l.code }})</option>
+            }
+          </select>
+        </div>
+        @if (editError()) {
+          <div class="error-alert">{{ editError() }}</div>
+        }
+        <div class="modal__actions">
+          <button (click)="cerrarEdicion()" class="btn btn--outline">Cancelar</button>
+          <button
+            (click)="guardarEdicion()"
+            [disabled]="editLoading() || !editUrl.trim() || !editLang"
+            class="btn btn--indigo"
+          >
+            @if (editLoading()) {
+              <div class="spinner spinner--sm"></div>
+              Guardando...
+            } @else {
+              Guardar cambios
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
 
 @if (selected()) {
   <div class="modal-overlay" (click)="selected.set(null)">
