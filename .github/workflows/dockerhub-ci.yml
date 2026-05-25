@@ -36,5 +36,5 @@ jobs:
           dockerfile: Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME_LEANDRO }}/as241s5_aej_04-be:latest
-            ${{ secrets.DOCKERHUB_USERNAME_LEANDRO }}/as241s5_aej_04-be:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME_LEANDRO }}/as241s5_aej_04-fe:latest
+            ${{ secrets.DOCKERHUB_USERNAME_LEANDRO }}/as241s5_aej_04-fe:${{ github.sha }}
