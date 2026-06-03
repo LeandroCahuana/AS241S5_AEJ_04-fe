@@ -1,0 +1,71 @@
+<div class="wa-form">
+  <div class="wa-form__header">
+    <a routerLink="/whatsapp" class="back-link">
+      <svg class="back-link__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Volver a registros
+    </a>
+    <h2 class="wa-form__title">Validar número WhatsApp</h2>
+    <p class="wa-form__subtitle">Ingresa el número con código de país (ej: +51987654321)</p>
+  </div>
+
+  <div class="card">
+    <form (ngSubmit)="validar()" #form="ngForm">
+      <div class="form-group">
+        <label for="numero" class="form-label">Número de teléfono</label>
+        <input
+          id="numero" name="numero" type="tel"
+          [(ngModel)]="numero" required
+          placeholder="+51987654321"
+          class="form-input"
+        />
+      </div>
+      <button type="submit" [disabled]="loading() || !numero.trim()" class="btn btn--green btn--full">
+        @if (loading()) {
+          <div class="spinner spinner--sm"></div>
+          Verificando...
+        } @else {
+          <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Verificar número
+        }
+      </button>
+    </form>
+    @if (error()) {
+      <div class="error-alert">{{ error() }}</div>
+    }
+  </div>
+
+  @if (result()) {
+    <div class="card card--mt result">
+      <h3 class="result__title">Resultado</h3>
+      <div class="result__rows">
+        <div class="result__row">
+          <span class="result__label">Número</span>
+          <span class="result__value">{{ result()!.phoneNumber }}</span>
+        </div>
+        <div class="result__row">
+          <span class="result__label">País</span>
+          <span class="result__value">{{ result()!.country || '—' }}</span>
+        </div>
+        <div class="result__row">
+          <span class="result__label">Estado en WhatsApp</span>
+          <span class="badge" [class]="result()!.valid ? 'badge--green' : 'badge--red'">
+            {{ result()!.valid ? '✓ Activo en WhatsApp' : '✗ No encontrado' }}
+          </span>
+        </div>
+        <div class="result__row result__row--last">
+          <span class="result__label">ID del registro</span>
+          <span class="result__id">{{ result()!.id }}</span>
+        </div>
+      </div>
+      <div class="result__actions">
+        <button (click)="limpiar()" class="btn btn--outline">Verificar otro</button>
+        <a routerLink="/whatsapp" class="btn btn--dark">Ver todos los registros</a>
+      </div>
+    </div>
+  }
+</div>

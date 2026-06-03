@@ -1,0 +1,116 @@
+<div class="wa-list">
+  <div class="page-header">
+    <div>
+      <h2 class="page-header__title">Verificaciones WhatsApp</h2>
+      <p class="page-header__subtitle">Gestiona los registros de verificación de números</p>
+    </div>
+    <a routerLink="/whatsapp/new" class="btn btn--green">
+      <svg class="btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+      </svg>
+      Validar número
+    </a>
+  </div>
+
+  <div class="table-card">
+    <div class="table-toolbar">
+      <span class="table-toolbar__title">Registros</span>
+      <div class="table-toolbar__filters">
+        <button
+          (click)="setFilter(undefined)"
+          class="table-toolbar__filter-btn"
+          [class.table-toolbar__filter-btn--active]="filter() === undefined"
+        >Todos</button>
+        <button
+          (click)="setFilter(true)"
+          class="table-toolbar__filter-btn"
+          [class.table-toolbar__filter-btn--active]="filter() === true"
+        >Activos</button>
+        <button
+          (click)="setFilter(false)"
+          class="table-toolbar__filter-btn"
+          [class.table-toolbar__filter-btn--active]="filter() === false"
+        >Eliminados</button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="data-table__spinner"><div class="spinner"></div></div>
+    } @else {
+      <div class="table-scroll-wrapper">
+      <table class="data-table">
+        <thead class="data-table__head">
+          <tr>
+            <th>Número</th>
+            <th>País</th>
+            <th>WhatsApp</th>
+            <th>Estado</th>
+            <th>Creado</th>
+            <th>Actualizado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of records(); track item.id) {
+            <tr class="data-table__row">
+              <td class="data-table__cell data-table__cell--bold">{{ item.phoneNumber }}</td>
+              <td class="data-table__cell">{{ item.country || '—' }}</td>
+              <td class="data-table__cell">
+                <span class="badge" [class]="item.valid ? 'badge--green' : 'badge--red'">
+                  {{ item.valid ? '✓ Válido' : '✗ Inválido' }}
+                </span>
+              </td>
+              <td class="data-table__cell">
+                <span class="badge" [class]="item.active ? 'badge--blue' : 'badge--slate'">
+                  {{ item.active ? 'Activo' : 'Eliminado' }}
+                </span>
+              </td>
+              <td class="data-table__cell data-table__cell--muted">{{ item.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td class="data-table__cell data-table__cell--muted">{{ item.updatedAt | date:'dd/MM/yyyy' }}</td>
+              <td class="data-table__cell">
+                <div class="action-group">
+                  @if (item.active) {
+                    <button (click)="revalidar(item.id)" title="Revalidar" class="action-btn action-btn--indigo">
+                      <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    </button>
+                    <button (click)="eliminar(item.id)" title="Eliminar" class="action-btn action-btn--red">
+                      <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  } @else {
+                    <button (click)="restaurar(item.id)" title="Restaurar" class="action-btn action-btn--green">
+                      <svg class="action-btn__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                      </svg>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="data-table__empty">
+                <svg style="width:2.5rem;height:2.5rem;margin:0 auto 0.75rem;display:block;opacity:0.3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                No hay registros para mostrar
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      </div>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="error-alert">{{ error() }}</div>
+  }
+</div>

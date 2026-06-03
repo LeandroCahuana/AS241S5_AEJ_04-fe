@@ -1,0 +1,24 @@
+.main-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f0fa;
+  align-items: stretch; // hace que todos los hijos estiren hasta la altura del contenedor
+
+  &__content {
+    flex: 1;
+    // sin overflow: auto aquí — el scroll queda en el documento,
+    // así el sidebar crece junto con el contenido
+    padding: 2rem;
+    min-width: 0;
+
+    @media (max-width: 768px) {
+      padding: 1rem;
+      padding-top: 4rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 0.75rem;
+      padding-top: 4rem;
+    }
+  }
+}
